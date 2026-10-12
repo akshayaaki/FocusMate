@@ -73,7 +73,7 @@ export default function HabitsPage() {
       supabase.from("habit_entries").select("*").eq("user_id", user.id),
     ]);
 
-    const rawHabits = habitsRes.data || [];
+    const rawHabits = (habitsRes.data || []) as any[];
     const rawEntries = (entriesRes.data || []) as HabitEntryRecord[];
 
     // Generate last 7 days window for mini-heatmap

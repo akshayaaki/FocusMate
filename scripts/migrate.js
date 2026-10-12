@@ -3,7 +3,9 @@ const fs = require("fs");
 const path = require("path");
 
 async function run() {
-  const connectionString = "postgresql://postgres:XEUG6YoEYWAOe2xJ@db.lkdtgjwvtuknfjjixrif.supabase.co:5432/postgres";
+  const connectionString =
+    process.env.DATABASE_URL ||
+    "postgresql://postgres.lkdtgjwvtuknfjjixrif:XEUG6YoEYWAOe2xJ@aws-0-ap-south-1.pooler.supabase.com:6543/postgres";
 
   console.log("Connecting to Supabase PostgreSQL...");
   const client = new Client({
