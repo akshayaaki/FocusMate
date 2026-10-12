@@ -2,7 +2,7 @@ import { Pool } from "pg";
 
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgresql://postgres:XEUG6YoEYWAOe2xJ@db.lkdtgjwvtuknfjjixrif.supabase.co:5432/postgres";
+  "postgresql://postgres.lkdtgjwvtuknfjjixrif:XEUG6YoEYWAOe2xJ@aws-0-ap-south-1.pooler.supabase.com:6543/postgres";
 
 // Global pool to prevent connection exhaustion during hot-reload in development
 declare global {
