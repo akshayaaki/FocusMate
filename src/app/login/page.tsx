@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
+import { signInWithGoogleFirebase } from "@/lib/firebase/auth";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
@@ -57,16 +58,27 @@ function LoginForm() {
     setLoading(true);
     setErrorMessage(null);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
-        },
-      });
-      if (error) setErrorMessage(error.message);
+      await signInWithGoogleFirebase();
+      router.push(redirectTo);
+      router.refresh();
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : "OAuth initialization failed.");
+      // Fallback to Supabase OAuth if Firebase popup is closed or unconfigured
+      try {
+        const supabase = createClient();
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
+          },
+        });
+        if (error) setErrorMessage(error.message);
+      } catch (oauthErr: unknown) {
+        setErrorMessage(
+          err instanceof Error
+            ? err.message
+            : "Google authentication failed. Please try again."
+        );
+      }
     } finally {
       setLoading(false);
     }
