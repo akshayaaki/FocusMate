@@ -1,0 +1,22 @@
+{
+  "name": "FocusMate — Your life, in balance",
+  "short_name": "FocusMate",
+  "description": "Student life organizer for academic responsibilities, study routines, habits, finances, and well-being.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#F8FAF9",
+  "theme_color": "#38302E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

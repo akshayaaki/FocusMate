@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 144 12% 98%;
+    --foreground: 12 10% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 12 10% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 12 10% 20%;
+
+    --primary: 12 10% 20%;
+    --primary-foreground: 144 18% 95%;
+
+    --secondary: 144 13% 80%;
+    --secondary-foreground: 12 10% 20%;
+
+    --muted: 144 10% 93%;
+    --muted-foreground: 15 5% 42%;
+
+    --accent: 163 10% 65%;
+    --accent-foreground: 12 10% 20%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 144 10% 87%;
+    --input: 144 10% 87%;
+    --ring: 163 10% 65%;
+
+    --radius: 0.75rem;
+
+    /* Official Brand Colors */
+    --color-sage-mist: #CCDAD1;
+    --color-soft-sage: #9CAEA9;
+    --color-slate-sage: #788585;
+    --color-warm-grey: #6F6866;
+    --color-deep-charcoal: #38302E;
+  }
+
+  .dark {
+    --background: 15 9% 12%;
+    --foreground: 144 14% 93%;
+
+    --card: 15 9% 16%;
+    --card-foreground: 144 14% 93%;
+
+    --popover: 15 9% 16%;
+    --popover-foreground: 144 14% 93%;
+
+    --primary: 144 13% 80%;
+    --primary-foreground: 15 9% 12%;
+
+    --secondary: 12 10% 22%;
+    --secondary-foreground: 144 14% 93%;
+
+    --muted: 15 9% 20%;
+    --muted-foreground: 15 5% 65%;
+
+    --accent: 163 10% 65%;
+    --accent-foreground: 15 9% 12%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 15 8% 24%;
+    --input: 15 8% 24%;
+    --ring: 163 10% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-brand-mist/50;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
