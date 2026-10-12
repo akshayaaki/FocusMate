@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/lib/auth/auth-context";
 
 interface NavItem {
   name: string;
@@ -74,6 +75,7 @@ const navSections: { title: string; items: NavItem[] }[] = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user: authUser, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isDarkMode, setIsDarkMode] = React.useState(false);
   const [userEmail, setUserEmail] = React.useState<string | null>(null);
@@ -97,28 +99,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Fetch authenticated user
+  // Sync user information
   React.useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserEmail(user.email || "Student");
-        // Fetch unread notifications count
-        supabase
-          .from("notifications")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .eq("is_read", false)
-          .then(({ count }) => {
-            if (count) setUnreadCount(count);
-          });
-      }
-    });
-  }, []);
+    if (authUser) {
+      setUserEmail(authUser.displayName || authUser.email || "Student");
+      const supabase = createClient();
+      supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", authUser.id)
+        .eq("is_read", false)
+        .then(({ count }) => {
+          if (count) setUnreadCount(count);
+        });
+    }
+  }, [authUser]);
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOut();
     router.push("/login");
   };
 
@@ -178,23 +176,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* User Profile Footer */}
         <div className="p-4 border-t border-border/70">
-          <div className="flex items-center justify-between">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-brand-charcoal dark:text-brand-mist">
-                {userEmail || "Student"}
-              </p>
-              <p className="text-[11px] text-muted-foreground">FocusMate Active</p>
+          <Link
+            href="/settings/profile"
+            className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted/60 transition-colors"
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-mist/50 text-brand-charcoal dark:bg-brand-charcoal dark:text-brand-mist font-semibold text-xs border border-border">
+              S
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSignOut}
-              title="Sign Out"
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-brand-charcoal dark:text-brand-mist">
+                Student
+              </p>
+              <p className="text-[10px] text-muted-foreground truncate">Workspace Active</p>
+            </div>
+          </Link>
         </div>
       </aside>
 
@@ -303,14 +298,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </nav>
 
               <div className="pt-4 border-t border-border">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2"
-                  onClick={handleSignOut}
+                <Link
+                  href="/settings/profile"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted"
                 >
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
-                </Button>
+                  <User className="h-4 w-4" />
+                  Profile Settings
+                </Link>
               </div>
             </div>
           </div>

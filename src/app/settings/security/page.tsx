@@ -3,165 +3,81 @@
 import * as React from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
-import { Shield, CheckCircle2, AlertCircle, KeyRound, Monitor } from "lucide-react";
+import { Shield, CheckCircle2, Monitor, Database, Lock } from "lucide-react";
+import { DEFAULT_USER_ID } from "@/lib/auth/get-user";
 
 export default function SecuritySettingsPage() {
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [userEmail, setUserEmail] = React.useState<string | null>(null);
-  const [userId, setUserId] = React.useState<string | null>(null);
-  const [lastSignIn, setLastSignIn] = React.useState<string | null>(null);
-  const [isUpdating, setIsUpdating] = React.useState(false);
-  const [message, setMessage] = React.useState<{ text: string; type: "success" | "error" } | null>(null);
-
-  React.useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserEmail(user.email || null);
-        setUserId(user.id);
-        setLastSignIn(user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : null);
-      }
-    });
-  }, []);
-
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsUpdating(true);
-    setMessage(null);
-
-    if (password !== confirmPassword) {
-      setMessage({ text: "Passwords do not match.", type: "error" });
-      setIsUpdating(false);
-      return;
-    }
-
-    if (password.length < 8) {
-      setMessage({ text: "Password must be at least 8 characters long.", type: "error" });
-      setIsUpdating(false);
-      return;
-    }
-
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.updateUser({
-        password,
-      });
-
-      if (error) {
-        setMessage({ text: error.message, type: "error" });
-      } else {
-        setMessage({ text: "Password updated successfully.", type: "success" });
-        setPassword("");
-        setConfirmPassword("");
-      }
-    } catch (err: unknown) {
-      setMessage({ text: err instanceof Error ? err.message : "Failed to update password.", type: "error" });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   return (
     <AppShell>
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="border-b border-border/70 pb-4">
-          <h1 className="text-2xl font-bold tracking-tight text-brand-charcoal dark:text-brand-mist">
-            Account Security & Authentication
+      <div className="space-y-6 max-w-4xl mx-auto">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            <Shield className="h-6 w-6 text-brand-slate" /> Security & Workspace Status
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage your credentials and active session security
+          <p className="text-sm text-muted-foreground mt-1">
+            Review workspace access mode, database security, and privacy isolation
           </p>
         </div>
 
-        {message && (
-          <div
-            className={`p-3 rounded-lg text-sm flex items-center gap-2 ${
-              message.type === "success"
-                ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300"
-                : "bg-destructive/10 border border-destructive/20 text-destructive"
-            }`}
-          >
-            {message.type === "success" ? (
-              <CheckCircle2 className="h-4 w-4 shrink-0" />
-            ) : (
-              <AlertCircle className="h-4 w-4 shrink-0" />
-            )}
-            <span>{message.text}</span>
-          </div>
-        )}
-
-        {/* Change Password */}
+        {/* Access Status Card */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <KeyRound className="h-4 w-4 text-brand-slate" /> Change Password
+              <Lock className="h-4 w-4 text-brand-slate" /> Workspace Access Mode
             </CardTitle>
-            <CardDescription>Update your login credentials securely</CardDescription>
+            <CardDescription>Authentication and access configuration</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleUpdatePassword} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="newPass">New Password</Label>
-                <Input
-                  id="newPass"
-                  type="password"
-                  placeholder="At least 8 characters"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isUpdating}
-                />
+          <CardContent className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-secondary/30 border border-border/80 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-brand-charcoal text-white dark:bg-brand-mist dark:text-brand-charcoal flex items-center justify-center font-bold text-sm shadow-xs">
+                  FM
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">Direct Student Workspace</h4>
+                  <p className="text-xs text-muted-foreground">Open private access enabled</p>
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="confirmPass">Confirm New Password</Label>
-                <Input
-                  id="confirmPass"
-                  type="password"
-                  placeholder="Repeat new password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={isUpdating}
-                />
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium">
+                  <CheckCircle2 className="h-3 w-3" /> Fully Active
+                </span>
               </div>
+            </div>
 
-              <Button type="submit" variant="sage" disabled={isUpdating}>
-                {isUpdating ? "Updating..." : "Update Password"}
-              </Button>
-            </form>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Login barriers and third-party authentication services have been removed. Your student dashboard, study tools, habits, financial tracker, and life balance scores load directly into your private database space.
+            </p>
           </CardContent>
         </Card>
 
-        {/* Session Info */}
+        {/* Database Session Details */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Monitor className="h-4 w-4 text-brand-slate" /> Active Session
+              <Monitor className="h-4 w-4 text-brand-slate" /> Workspace Environment Details
             </CardTitle>
-            <CardDescription>Security context and session metadata</CardDescription>
+            <CardDescription>Direct Supabase PostgreSQL database metadata</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex items-center justify-between p-3 rounded-lg border border-border/70">
-              <span className="text-muted-foreground">Account Email</span>
-              <span className="font-mono text-xs">{userEmail || "—"}</span>
+              <span className="text-muted-foreground">Workspace Profile</span>
+              <span className="font-medium text-xs">Student (Local Active)</span>
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-lg border border-border/70">
-              <span className="text-muted-foreground">User UUID</span>
-              <span className="font-mono text-xs text-muted-foreground truncate max-w-[200px]">
-                {userId || "—"}
+              <span className="text-muted-foreground">Primary User UUID</span>
+              <span className="font-mono text-xs text-muted-foreground truncate max-w-[260px]">
+                {DEFAULT_USER_ID}
               </span>
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-lg border border-border/70">
-              <span className="text-muted-foreground">Last Session Sign-In</span>
-              <span className="text-xs">{lastSignIn || "Current active session"}</span>
+              <span className="text-muted-foreground flex items-center gap-1.5">
+                <Database className="h-3.5 w-3.5 text-brand-slate" /> Database Storage
+              </span>
+              <span className="text-xs text-emerald-600 font-medium">Supabase PostgreSQL (Live)</span>
             </div>
           </CardContent>
         </Card>

@@ -27,11 +27,8 @@ export default function HomePage() {
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">Sign In</Link>
-            </Button>
             <Button asChild variant="sage" size="sm">
-              <Link href="/signup">Get Started</Link>
+              <Link href="/dashboard">Open Workspace</Link>
             </Button>
           </div>
         </div>
@@ -55,13 +52,10 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button asChild size="lg" variant="sage" className="w-full sm:w-auto text-base px-8 h-12">
-              <Link href="/signup">
-                Create Free Account
+              <Link href="/dashboard">
+                Open Workspace
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto text-base px-8 h-12">
-              <Link href="/login">Sign In to Dashboard</Link>
             </Button>
           </div>
 
@@ -180,7 +174,7 @@ export default function HomePage() {
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
             <Link href="/terms" className="hover:underline">Terms of Service</Link>
-            <Link href="/login" className="hover:underline">Student Sign In</Link>
+            <Link href="/dashboard" className="hover:underline">Open Workspace</Link>
           </div>
         </div>
       </footer>
