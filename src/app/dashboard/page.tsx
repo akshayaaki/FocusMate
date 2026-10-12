@@ -135,7 +135,7 @@ export default function DashboardPage() {
         .gte("created_at", `${todayStr}T00:00:00`);
 
       const studyMinutesToday = (sessionsData || []).reduce(
-        (sum, s) => sum + (s.actual_duration_minutes || 0),
+        (sum: number, s: any) => sum + (s.actual_duration_minutes || 0),
         0
       );
 
@@ -147,7 +147,7 @@ export default function DashboardPage() {
         .eq("is_archived", false);
 
       const dayOfWeek = now.getDay();
-      const scheduledHabits = (habitsData || []).filter((h) =>
+      const scheduledHabits = (habitsData || []).filter((h: any) =>
         (h.scheduled_days as number[]).includes(dayOfWeek)
       );
 
@@ -158,10 +158,10 @@ export default function DashboardPage() {
         .eq("entry_date", todayStr);
 
       const completedHabitIds = new Set(
-        (todayEntries || []).filter((e) => e.is_completed).map((e) => e.habit_id)
+        (todayEntries || []).filter((e: any) => e.is_completed).map((e: any) => e.habit_id)
       );
 
-      const habitsList = scheduledHabits.map((h) => ({
+      const habitsList = scheduledHabits.map((h: any) => ({
         id: h.id,
         name: h.name,
         is_completed_today: completedHabitIds.has(h.id),
@@ -188,7 +188,7 @@ export default function DashboardPage() {
 
       let spentThisMonth = 0;
       let incomeThisMonth = 0;
-      (txData || []).forEach((t) => {
+      (txData || []).forEach((t: any) => {
         if (t.transaction_type === "expense") spentThisMonth += Number(t.amount);
         if (t.transaction_type === "income") incomeThisMonth += Number(t.amount);
       });
@@ -218,7 +218,7 @@ export default function DashboardPage() {
       const goalsAvgProgress =
         (goalsData || []).length > 0
           ? (goalsData || []).reduce(
-              (acc, g) => acc + (Number(g.current_value) / Number(g.target_value)) * 100,
+              (acc: number, g: any) => acc + (Number(g.current_value) / Number(g.target_value)) * 100,
               0
             ) / (goalsData || []).length
           : undefined;
@@ -237,7 +237,7 @@ export default function DashboardPage() {
       });
 
       setData({
-        tasks: tasksData || [],
+        tasks: (tasksData as DashboardData["tasks"]) || [],
         studyMinutesToday,
         studyTargetMinutes,
         habits: habitsList,
